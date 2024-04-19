@@ -1,7 +1,6 @@
 # CASSANDRA
 
-#### 1. Diseña una base de datos Cassandra para dar servicio a las lecturas y escrituras
-anteriores. Argumenta tus decisiones de diseño.
+#### 1. Diseña una base de datos Cassandra para dar servicio a las lecturas y escrituras anteriores. Argumenta tus decisiones de diseño.
 
 Para esta tarea hemos pensado en realizar tres tablas, a continuación la explicación y justificación de ellas:
 
@@ -71,9 +70,7 @@ El fichero en cuestión es el llamado archivo.cql, que como vemos realiza la tar
 
 La ruta es esa, ya que es la que hemos añadido en el volumen del docker-compose.yml, que hemos mencionado anteriormente. Con todos estos pasos tendríamos nuestros .csv cargados en nuestro diseño de Cassandra. Recordar que este archivo tiene que estar dentro del nodo en el que nos hayamos metido, en este caso el nodo1, y que los .csv tienen que estar en cada nodo creado, en este caso en los tres, para que la carga de los datos sea exitosa.
 
-#### 5. [OPCIONAL] Si el diseño lo necesita, actualiza la tabla de escrituras para incluir
-cualquier modificación que sea necesaria en la información que se le debe
-proporcionar al servidor.
+#### 5. [OPCIONAL] Si el diseño lo necesita, actualiza la tabla de escrituras para incluir cualquier modificación que sea necesaria en la información que se le debe proporcionar al servidor.
 
 Hemos realizado varias modificaciones:
 
@@ -97,7 +94,25 @@ Hemos elegido consitencia ONE ya que en el aspecto de rendimiento es más rápid
 
 ###### Lectura en la tabla user_statistics con nivel de consistencia ONE
 
-Esta tabla te devuelve el tiempo y la fecha en el que completó la dungeon un usuario concreto. Hemos elegido la misma consistencia por los mismos motivos mencionados anteriormente. Está ordenado de menor a mayor según el tiempor que tardó en completar la dungeon.
+Esta consulta te devuelve el tiempo y la fecha en el que completó la dungeon un usuario concreto. Hemos elegido la misma consistencia por los mismos motivos mencionados anteriormente. Está ordenado de menor a mayor según el tiempor que tardó en completar la dungeon.
+
+###### Lectura en la tabla top_horde con nivel de consistencia ONE
+
+Esta consulta devuelve el número de kills, el email y el nombre del usuario, de un país y un evento en concreto. Las kills no están ordenadas ya que son de tipo COUNTER. Usamos la consistencia ONE
+
+##### Consultas de escritura
+
+###### Escritura en la tabla hall_of_fame y user_statistics con nivel de consistencia ONE
+
+Esta consulta inserta en la tabla hall_of_fame y user_statistics los valores requeridos. En la de hall_of_fame hemos añadido el país ya que es importante a la hora de después encontrarlo en la consulta de lectura. Usamos la consistencia de tipo ONE
+
+###### Escritura en la tabla top_horde con nivel de consistencia ONE
+
+Esta consulta actualiza el número de kills de un usuario, en un evento de un país. Usamos la función UPDATE, ya que damos por hecho que todos los usuarios han hecho kills. Usamos la consistencia de tipo ONE. 
+
+
+
+
 
 
 
