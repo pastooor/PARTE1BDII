@@ -49,6 +49,10 @@ Justificación:
 relacional a ficheros .csv. Los ficheros deberán tener un formato acorde al diseño
 del punto 1.
 
+3. Prepara un cluster local de 3 nodos todos en el mismo rack y datacenter.
+
+Esta tarea está realizada en el docker-compose.yml, que esta dentro de esta carpeta
+
 
 
     
