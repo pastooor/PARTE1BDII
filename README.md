@@ -93,6 +93,10 @@ Hay que tener en cuenta que para ejecutar este archivo hay que tener ejecutado e
 
 ###### Lectura en la tabla hall_of_fame con nivel de consistencia ONE
 
+Hemos elegido consitencia ONE ya que en el aspecto de rendimiento es más rápido y se reduce la carga en el sistema y mejora la escalabilidad. No ofrece la misma resistencia a fallos que otras consistencias, pero como ponía en el enunciado, no es relevante. Esta consulta te saca el top5 según el tiempo que ha tardado el usuario en completar la dungeon, de un país y un dungeon concreto. En el enunciado ponía de sacar de todos los países el top5 de cada dungeon. Para ello, tendríamos que hacer un .py en el que crearíamos un bucle for que recorriese los dungeons en cada país para sacar el top5.
+
+######
+
 
 
 
