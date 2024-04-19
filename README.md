@@ -93,7 +93,7 @@ Hay que tener en cuenta que para ejecutar este archivo hay que tener ejecutado e
 
 ##### Consultas de lectura
 
-
+###### Lectura en la tabla hall_of_fame con nivel de consistencia ONE
 
 
 
