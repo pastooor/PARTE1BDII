@@ -45,17 +45,15 @@ Justificación:
 
 - La clave primaria formada por ((country, event_id), user_name, email)), se ha diseñado de esta manera para acceder de manera adecuada a cada país y horda. Además hemos añadido la variable user_name y la variable email, ya que hemos creado la variable n_kills de tipo COUNTER, que será nuestro contador de kills, y para que funcione la tabla tienes que meter de clave primaria a todos los valores de la tabla menos el de tipo COUNTER.
 
-#### 2. Crea las consultas .sql necesarias para exportar los datos de la base de datos
-relacional a ficheros .csv. Los ficheros deberán tener un formato acorde al diseño
-del punto 1.
+#### 2. Crea las consultas .sql necesarias para exportar los datos de la base de datos relacional a ficheros .csv. Los ficheros deberán tener un formato acorde al diseño del punto 1.
+
+Para esta tarea hemos creado el archivo consultas.sql, que ejecuta las consultas sql necesarias para crear los .csv necesarios. Para ello hemos trabajado con MYSQL Workbench y en el docker-compose.yml que hemos utilizado para realizar la tarea 3, hemos creado un servicio de sql para guardar ahí los .csv de cara a las siguientes tareas.
 
 #### 3. Prepara un cluster local de 3 nodos todos en el mismo rack y datacenter.
 
 Esta tarea está realizada en el docker-compose.yml, que esta dentro de esta carpeta. En el archivo podemos ver como creamos los tres nodos, que después utilizaremos para desplegar nuestro diseño de Cassandra y realizar las consultas de escritura y de lectura.
 
-#### 4. Haz un fichero .cql que creen tu diseño en Cassandra y cargue los ficheros .csv
-creados en el paso 2. Se debe utilizar un factor de replicación de 2 y tener en
-cuenta que se las pruebas se ejecutaran en un cluster local.
+#### 4. Haz un fichero .cql que creen tu diseño en Cassandra y cargue los ficheros .csv creados en el paso 2. Se debe utilizar un factor de replicación de 2 y tener en cuenta que las pruebas se ejecutaran en un cluster local.
 
 El fichero en cuestión es el llamado archivo.cql, que como vemos realiza la tarea deseada. Ya que hay que tener en cuenta que las pruebas se ejecutan en un cluster local, los pasos para ejecutar este archivo es el siguiente:
 
@@ -94,6 +92,8 @@ Hay que tener en cuenta que para ejecutar este archivo hay que tener ejecutado e
 ##### Consultas de lectura
 
 ###### Lectura en la tabla hall_of_fame con nivel de consistencia ONE
+
+
 
 
 
