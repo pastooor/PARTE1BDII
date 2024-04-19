@@ -97,7 +97,9 @@ Hemos elegido consitencia ONE ya que en el aspecto de rendimiento es más rápid
 
 ###### Lectura en la tabla user_statistics con nivel de consistencia ONE
 
-Esta tabla te devuelve el tiempo y la fecha en el que completó la dungeon un usuario concreto. Hemos elegido la misma consistencia por los mismos motivos mencionados anteriormente.
+Esta tabla te devuelve el tiempo y la fecha en el que completó la dungeon un usuario concreto. Hemos elegido la misma consistencia por los mismos motivos mencionados anteriormente. Está ordenado de menor a mayor según el tiempor que tardó en completar la dungeon.
+
+
 
 
 
