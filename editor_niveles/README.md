@@ -66,4 +66,21 @@ Se nos pide realizar una seria de consultas sobre nuestra base de datos.
       WITH r.dungeon_name AS dungeon, COUNT(*) AS num_connections
       RETURN dungeon, num_connections
 
+#### 12.	Buscar la/las salas que contienen el/los monstruos de más nivel de la mazmorra.
+        MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
+        WITH r, max(m.level) AS maxLevel
+        WHERE m.level = maxLevel
+        RETURN r
 
+#### 13.	Calcular la experiencia total de cada uno de los encuentros (grupo de monstruos presentes en una sala) de una mazmorra y mostrarlos ordenados de mayor a menor experiencia.
+        MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
+        WITH r, collect(m) AS monsters, sum(m.exp) AS totalExperience
+        RETURN r, monsters, totalExperience
+        ORDER BY totalExperience DESC
+
+#### 14.	Buscar la sala dónde este el encuentro (grupo de monstruos presentes en una sala) que más experiencia da de una mazmorra.
+        MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
+        WITH room, collect(monster) AS monsters, sum(monster.experience) AS totalExperience
+        ORDER BY totalExperience DESC
+        LIMIT 1
+        RETURN room, monsters, totalExperience;
