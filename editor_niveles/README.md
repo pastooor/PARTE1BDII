@@ -5,8 +5,8 @@ Se nos pide realizar una seria de consultas sobre nuestra base de datos.
 
 ### Desde la interfaz web 
 #### 1.	Buscar todas las salas de todas las mazmorras que contengan un tesoro en particular.
-  MATCH (r:Room) – [:CONTAINS] – (l:Loot {name: $loot_name})
-  RETURN r.name, l
+    MATCH (r:Room) – [:CONTAINS] – (l:Loot {name: $loot_name})
+    RETURN r.name, l
 
 #### 2.	Obtener todos los monstruos que hay en una sala en particular.
   MATCH (r:Room {room_name: $room_name}) – [:CONTAINS] – (m:Monster)
