@@ -105,3 +105,18 @@ Por último calculamos el número medio de pasillos por mazmorra.
 
 https://github.com/pastooor/PARTE1BDII/blob/main/editor_niveles/mapamundi.html
 
+### Visualización 
+Ahora pasamos a la parte de visualización donde a través de queries ejecutadas en python y la ayuda de la librería pyvis vamos a generar archivos html donde se van a mostrar los grafos solucion de cada una de las visualizaciones. 
+
+En este Readme, solo vamos a mostrar las queries que hemos usado para después a través de código python crear los grafos, todo ese código se puede encontrar en el archivo 'visualizacion.ipynb'.
+
+#### 1.    Mapamundi: El mapamundi debe mostrar las distintas áreas del juego y como se interconectan unas con otras.
+Con esta query vamos a sacar el camino más corto entre todas las areas del juego.
+
+##### Query
+        MATCH p=() - [:SHORTEST_PATH] - () RETURN p
+
+En el achivo 'mapamundi.html' se puede ver el grafo resultante que hemos sacado para representar el mapamundi.
+
+
+
