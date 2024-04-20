@@ -1,7 +1,7 @@
-# Neo4J
+# Neo4j
 
 ## Tareas
-Se nos pide realizar una seria de consultas sobre nuestra base de datos.
+Se nos pide realizar una seria de consultas sobre nuestra base de datos de neo4j.
 
 ### Desde la interfaz web 
 #### 1.	Buscar todas las salas de todas las mazmorras que contengan un tesoro en particular.
