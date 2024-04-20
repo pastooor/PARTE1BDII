@@ -2,7 +2,7 @@
 
 #### 1. Diseña una base de datos Cassandra para dar servicio a las lecturas y escrituras anteriores. Argumenta tus decisiones de diseño.
 
-Para esta tarea hemos pensado en realizar tres tablas, a continuación la explicación y justificación de ellas:
+Para esta tarea hemos pensado en realizar tres tablas, a continuación la explicación y justificación de cada una de ellas:
 
 Tabla hall_of_fame:
 
@@ -17,7 +17,7 @@ Tabla hall_of_fame:
 
   Justificación:
   
- - La clave primaria formada por ((country, dungeon_id), time_minutes, date), se ha diseñado de esta manera para poder acceder de manera adecuada a cada país y dungeon. Además hemos añadido la variable time_minutes, ya que luego la necesitaremos en las consultas de lectura para ordenarlos de menor a mayor, y la variable date, ya que son valores únicos.
+ - La clave primaria formada por ((country, dungeon_id), time_minutes, date), se ha diseñado de esta manera para poder acceder de manera adecuada a cada país y dungeon como te especifica el problema. Además hemos añadido la variable time_minutes, ya que luego la necesitaremos en las consultas de lectura para ordenarlos de menor a mayor, y la variable date, ya que es la única variable con valores únicos.
 
 Tabla user_statistics:
 
@@ -68,7 +68,7 @@ El fichero en cuestión es el llamado archivo.cql, que como vemos realiza la tar
 
         SOURCE 'var/lib/cassandra/archivo.cql';
 
-La ruta es esa, ya que es la que hemos añadido en el volumen del docker-compose.yml, que hemos mencionado anteriormente. Con todos estos pasos tendríamos nuestros .csv cargados en nuestro diseño de Cassandra. Recordar que este archivo tiene que estar dentro del nodo en el que nos hayamos metido, en este caso el nodo1, y que los .csv tienen que estar en cada nodo creado, en este caso en los tres, para que la carga de los datos sea exitosa.
+La ruta es esa, ya que es la que hemos añadido en el volumen del docker-compose.yml, que hemos mencionado anteriormente. Con todos estos pasos tendríamos nuestros .csv cargados en nuestro diseño de Cassandra. Recordar que este archivo tiene que estar dentro del nodo en el que nos hayamos metido, en este caso el nodo1, al igual que los .csv, para que la carga de los datos sea exitosa.
 
 #### 5. [OPCIONAL] Si el diseño lo necesita, actualiza la tabla de escrituras para incluir cualquier modificación que sea necesaria en la información que se le debe proporcionar al servidor.
 
