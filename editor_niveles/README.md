@@ -62,9 +62,24 @@ Se nos pide realizar una seria de consultas sobre nuestra base de datos en neo4j
       RETURN avg(m.level) AS avgLevel;
 
 #### 11.	Calcular el número medio de pasillos (tanto entrantes como salientes) que tienen las salas de una mazmorra.
+##### Primera Query
+En la que calculamos el número total de pasillos por mazmorra.
       MATCH (r:Room)-[:IS_CONNECTED]->(:Room)
       WITH r.dungeon_name AS dungeon, COUNT(*) AS num_connections
       RETURN dungeon, num_connections
+      
+##### Segunda Query
+Calculamos el número total de mazmorras.
+        MATCH (r:Room)
+        WITH DISTINCT r.dungeon_name AS dungeon
+        RETURN COUNT(DISTINCT dungeon) AS total_dungeons
+
+##### Tercera Query
+Por último calculamos el número medio de pasillos por mazmorra.
+        MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
+        WITH r, max(m.level) AS maxLevel
+        WHERE m.level = maxLevel
+        RETURN r
 
 #### 12.	Buscar la/las salas que contienen el/los monstruos de más nivel de la mazmorra.
         MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
