@@ -96,7 +96,7 @@ Por último calculamos el número medio de pasillos por mazmorra.
         RETURN r, monsters, totalExperience
         ORDER BY totalExperience DESC
 
-#### 14.	Buscar la sala dónde este el encuentro (grupo de monstruos presentes en una sala) que más experiencia da de una mazmorra.
+#### 14.    Buscar la sala dónde este el encuentro (grupo de monstruos presentes en una sala) que más experiencia da de una mazmorra.
         MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
         WITH room, collect(monster) AS monsters, sum(monster.experience) AS totalExperience
         ORDER BY totalExperience DESC
@@ -108,9 +108,9 @@ https://github.com/pastooor/PARTE1BDII/blob/main/editor_niveles/mapamundi.html
 ### Visualización 
 Ahora pasamos a la parte de visualización donde a través de queries ejecutadas en python y la ayuda de la librería pyvis vamos a generar archivos html donde se van a mostrar los grafos solucion de cada una de las visualizaciones. 
 
-En este Readme, solo vamos a mostrar las queries que hemos usado para después a través de código python crear los grafos, todo ese código se puede encontrar en el archivo 'visualizacion.ipynb'.
+En este Readme, solo vamos a mostrar las queries que hemos usado para después a través de código python crear los grafos, todo ese código se puede encontrar en el archivo **'visualizacion.ipynb'**.
 
-#### 1.    Mapamundi: El mapamundi debe mostrar las distintas áreas del juego y como se interconectan unas con otras.
+#### 1.    **Mapamundi:** El mapamundi debe mostrar las distintas áreas del juego y como se interconectan unas con otras.
 Con esta query vamos a sacar el camino más corto entre todas las areas del juego.
 
 ##### Query
@@ -118,5 +118,62 @@ Con esta query vamos a sacar el camino más corto entre todas las areas del jueg
 
 En el achivo 'mapamundi.html' se puede ver el grafo resultante que hemos sacado para representar el mapamundi.
 
+#### 2.    **Listado mazmorras:** El listado de mazmorras debe mostrar todas las mazmorras del juego y las áreas con las que están conectadas. Debería ser capaz de ver a simple vista que mazmorras están en cada área y mazmorras hacen de puente entre dos áreas. 
 
+##### Query
+        MATCH (d:Room) 
+        WHERE d.dungeon_name IS NOT NULL 
+        WITH DISTINCT d.dungeon_name AS dungeon_name, collect(d) AS rooms 
+        UNWIND rooms AS room 
+        MATCH (room)-[:IS_CONNECTED]-(a:Area) 
+        RETURN dungeon_name, collect(DISTINCT a.name) AS connected_areas"
+
+En el achivo 'listado_mazmorras.html' se pueden ver todas las mazmorras del juego que pertenezcan al menos a una de las 10 areas del juego. 
+Las areas del juego se representan de color amarillo y las mazmorras de color azul.
+
+
+#### 2.    **Listado mazmorras:** El listado de mazmorras debe mostrar todas las mazmorras del juego y las áreas con las que están conectadas. Debería ser capaz de ver a simple vista que mazmorras están en cada área y mazmorras hacen de puente entre dos áreas. 
+
+##### Query
+        MATCH (d:Room) 
+        WHERE d.dungeon_name IS NOT NULL 
+        WITH DISTINCT d.dungeon_name AS dungeon_name, collect(d) AS rooms 
+        UNWIND rooms AS room 
+        MATCH (room)-[:IS_CONNECTED]-(a:Area) 
+        RETURN dungeon_name, collect(DISTINCT a.name) AS connected_areas"
+
+En el achivo 'listado_mazmorras.html' se pueden ver todas las mazmorras del juego que pertenezcan al menos a una de las 10 areas del juego. 
+Las areas del juego se representan de color amarillo y las mazmorras de color azul.
+
+
+
+#### 3.    Mini-mapa mazmorra: Dada una mazmorra el mini mapa debe mostrar información que ayude a los aventureros a explorar la mazmorra. En el mini mapa debe ser fácil reconocer las entradas y las salidas de una mazmorra. Los pasillos que llevan a salas interesantes. Las zonas donde hay monstruos o tesoros y el nivel/precio de estos. 
+
+Gracias a estas querie vamos a poder sacar toda la información de un mazmorra.
+##### Query 1
+Simplemente con esta query ya tendriamos toda la información de cada una de las habitaciones de la mazmorra pero nos faltaría saber el camino para poder recorrer esa mazmorra, las conexiones entre las habitaciones.
+
+        MATCH (entrance:Room {dungeon_name: $dungeon_name})-[:IS_CONNECTED]->(:Area) 
+        MATCH (exit:Room {dungeon_name: $dungeon_name}) <- [:IS_CONNECTED] - (:Area) 
+        WHERE entrance <> exit 
+        OPTIONAL MATCH  (entrance) - [:CONTAINS] - (m1:Monster) 
+        OPTIONAL MATCH  (entrance) - [:CONTAINS] - (l1:Loot) 
+        OPTIONAL MATCH  (exit) - [:CONTAINS] - (m2:Monster) 
+        OPTIONAL MATCH  (exit) - [:CONTAINS] - (l2:Loot) 
+        MATCH (r:Room {dungeon_name: $dungeon_name}) - [:IS_CONNECTED] - (:Room)
+        WHERE r <> entrance AND r <> exit 
+        MATCH (r) - [:CONTAINS] - (m:Monster), 
+              (r) - [:CONTAINS] - (l:Loot) 
+        RETURN entrance, exit, r, m, l, m1, l1, m2, l2
+
+##### Query 2
+Como ya se ha explicado para saber como avanzar y poder superar una mazmorra hay que saber el camino a seguir y esto lo sacamos conectando las habitaciones.
+
+        MATCH p=(r:Room {dungeon_name: $dungeon_name}) - [:IS_CONNECTED] - (r2:Room {dungeon_name: $dungeon_name})
+        RETURN p
+
+En el achivo 'mazmorras.html' se puede ver cada una de las habitaciones, tesoros y monstruos que hay en la mazmorra que se desee.
+Dentro del grafo que se saca, se pueden ver las habitaciones de color rosa, sus conexiones con otras habitaciones y el contenido en el caso de que esa habitación tenga tanto de tesoros como de monstruos, de color amarillo y azul respectivamente. 
+
+Gracias a este grafo un jugador podría elegir por que habitaciones le interesa pasar en función de lo que busque ya sean kills, recompensas o records de tiempos.
 
