@@ -103,8 +103,6 @@ Por último calculamos el número medio de pasillos por mazmorra.
         LIMIT 1
         RETURN r, monsters, totalExperience;
 
-https://github.com/pastooor/PARTE1BDII/blob/main/editor_niveles/mapamundi.html
-
 ### Visualización 
 Ahora pasamos a la parte de visualización donde a través de queries ejecutadas en python y la ayuda de la librería pyvis vamos a generar archivos html donde se van a mostrar los grafos solucion de cada una de las visualizaciones. 
 
