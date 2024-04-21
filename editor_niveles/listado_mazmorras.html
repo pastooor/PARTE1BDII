@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 1, "label": "Bentclock, Laboratory of the Sexy Thieves", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 2, "label": "Panicky Desert of Fomalhaut", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 3, "label": "Insane Jungle of Gondor", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 4, "label": "Benton, Necropolis of the Clumsy Presidents", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 5, "label": "Clumsy Tropical Rainforest of Bilbo", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 6, "label": "Embarrassed Swamp of Fafnir", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 7, "label": "Burgfire, Necropolis of the Old-Fashioned Werewolves", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 8, "label": "Old-Fashioned Mountain of Emerald city", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 9, "label": "Jolly Steppe of Emerald city", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 10, "label": "Burgtethe, Pit of the Sticky Nerds", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 11, "label": "Terrible River of Gandalf", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 12, "label": "Clockmire, Mausoleum of the Old-Fashioned Kings", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 13, "label": "Cobwold, Dungeon of the Jealous Thieves", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 14, "label": "Corriebent, Castle of the Bashful Emperors", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 15, "label": "Uptight Shrubland of Avalon", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 16, "label": "Dalstrath, Sewers of the Old-Fashioned Kings", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 17, "label": "Daylwold, Stockade of the Raspy Robots", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 18, "label": "Empowered Steppe of Isengard", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 19, "label": "Fairdayl, Sepulcher of the Snobbish Emperors", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 20, "label": "Feldecorrie, Asylum of the Elegant Pirates", "shape": "dot"}, {"border": "#FEFDA2", "color": "#FFFEBA", "highlight_border": "#F7F791", "highlight_color": "#EBEC86", "id": 21, "label": "Terrible Moor of Babylon", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 22, "label": "Feldedal, Mausoleum of the Bashful Presidents", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 23, "label": "Feldesnow, Dungeon of the Repulsive Kings", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 24, "label": "Fengate, Crypt of the Fierce Sumo Wrestlers", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 25, "label": "Fenglass, Sepulcher of the Terrible Emperors", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 26, "label": "Firepine, Prison of the Immature Stoners", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 27, "label": "Gatedayl, Mansion of the Terrible Sumo Wrestlers", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 28, "label": "Gateonyx, Prison of the Elderly Bandits", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 29, "label": "Gatetethe, Crypt of the Mysterious Degenerates", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 30, "label": "Holdedal, Castle of the Lazy Unknowns", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 31, "label": "Horneburg, Hobble of the Devilish Robots", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 32, "label": "Hornecastel, Culverts of the Raspy Presidents", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 33, "label": "Hornewan, Prison of the Magnificent Unknowns", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 34, "label": "Hyllesgate, Mansion of the Worried Unknowns", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 35, "label": "Leechwort, Necropolis of the Immature Bandits", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 36, "label": "Marshcob, Sepulcher of the Embarrassed Thieves", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 37, "label": "Mossdal, Reformatory of the Amorous Otaku", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 38, "label": "Onyxholde, Dungeon of the Uptight Rogues", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 39, "label": "Pineholde, Oubliette of the Abnormal Hippies", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 40, "label": "Pinewort, Vault of the Agreeable Shoguns", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 41, "label": "Schyppegarth, Cave of the Sticky Robots", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 42, "label": "Shadyclock, Mines of the Screeching Stoners", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 43, "label": "Shadydayl, Cave of the Lazy Bandits", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 44, "label": "Shadystrath, Castle of the Clumsy Ninjas", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 45, "label": "Shadywold, Pit of the Sparkling Bandits", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 46, "label": "Sparthfire, Reformatory of the Unsightly Presidents", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 47, "label": "Spleenstream, Pit of the Magnificent Robots", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 48, "label": "Strathgate, Laboratory of the Sexy Otaku", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 49, "label": "Strathgreat, Oubliette of the Mysterious Emperors", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 50, "label": "Tethegreat, Hobble of the Worried Otaku", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 51, "label": "Tongreat, Oubliette of the Clumsy Thieves", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 52, "label": "Tonwold, Mausoleum of the Repulsive Scientists", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 53, "label": "Windlegarth, Hobble of the Amorous Degenerates", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 54, "label": "Windleschyppe, Hobble of the Jolly Thieves", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 55, "label": "Woldtethe, Mines of the Elderly Otaku", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 56, "label": "Woldwort, Prison of the Jealous Vampires", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 57, "label": "Woodburg, Reformatory of the Wandering Stoners", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 58, "label": "Woodton, Cave of the Itchy Shoguns", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 59, "label": "Wortwater, Mausoleum of the Fancy Nerds", "shape": "dot"}, {"border": "#88A7D0", "color": "#A6BDDC", "highlight_border": "#7398C4", "highlight_color": "#688DB9", "id": 60, "label": "Arvalecliffe, Laboratory of the Unsightly Ninjas", "shape": "dot"}]);
+                  edges = new vis.DataSet([{"edge_color": "#808080", "from": 1, "to": 2}, {"edge_color": "#808080", "from": 1, "to": 3}, {"edge_color": "#808080", "from": 4, "to": 5}, {"edge_color": "#808080", "from": 4, "to": 6}, {"edge_color": "#808080", "from": 7, "to": 8}, {"edge_color": "#808080", "from": 7, "to": 9}, {"edge_color": "#808080", "from": 10, "to": 11}, {"edge_color": "#808080", "from": 10, "to": 8}, {"edge_color": "#808080", "from": 12, "to": 5}, {"edge_color": "#808080", "from": 12, "to": 6}, {"edge_color": "#808080", "from": 13, "to": 5}, {"edge_color": "#808080", "from": 13, "to": 6}, {"edge_color": "#808080", "from": 14, "to": 15}, {"edge_color": "#808080", "from": 14, "to": 8}, {"edge_color": "#808080", "from": 16, "to": 15}, {"edge_color": "#808080", "from": 17, "to": 18}, {"edge_color": "#808080", "from": 19, "to": 9}, {"edge_color": "#808080", "from": 19, "to": 5}, {"edge_color": "#808080", "from": 20, "to": 21}, {"edge_color": "#808080", "from": 22, "to": 11}, {"edge_color": "#808080", "from": 22, "to": 9}, {"edge_color": "#808080", "from": 23, "to": 3}, {"edge_color": "#808080", "from": 24, "to": 8}, {"edge_color": "#808080", "from": 24, "to": 15}, {"edge_color": "#808080", "from": 25, "to": 11}, {"edge_color": "#808080", "from": 25, "to": 9}, {"edge_color": "#808080", "from": 26, "to": 6}, {"edge_color": "#808080", "from": 26, "to": 11}, {"edge_color": "#808080", "from": 27, "to": 2}, {"edge_color": "#808080", "from": 27, "to": 3}, {"edge_color": "#808080", "from": 28, "to": 8}, {"edge_color": "#808080", "from": 29, "to": 18}, {"edge_color": "#808080", "from": 29, "to": 6}, {"edge_color": "#808080", "from": 30, "to": 15}, {"edge_color": "#808080", "from": 31, "to": 5}, {"edge_color": "#808080", "from": 31, "to": 6}, {"edge_color": "#808080", "from": 32, "to": 18}, {"edge_color": "#808080", "from": 32, "to": 6}, {"edge_color": "#808080", "from": 33, "to": 8}, {"edge_color": "#808080", "from": 34, "to": 9}, {"edge_color": "#808080", "from": 34, "to": 5}, {"edge_color": "#808080", "from": 35, "to": 21}, {"edge_color": "#808080", "from": 35, "to": 2}, {"edge_color": "#808080", "from": 36, "to": 3}, {"edge_color": "#808080", "from": 37, "to": 18}, {"edge_color": "#808080", "from": 37, "to": 3}, {"edge_color": "#808080", "from": 38, "to": 8}, {"edge_color": "#808080", "from": 38, "to": 9}, {"edge_color": "#808080", "from": 39, "to": 15}, {"edge_color": "#808080", "from": 40, "to": 2}, {"edge_color": "#808080", "from": 40, "to": 18}, {"edge_color": "#808080", "from": 41, "to": 6}, {"edge_color": "#808080", "from": 41, "to": 11}, {"edge_color": "#808080", "from": 42, "to": 8}, {"edge_color": "#808080", "from": 43, "to": 15}, {"edge_color": "#808080", "from": 44, "to": 2}, {"edge_color": "#808080", "from": 45, "to": 18}, {"edge_color": "#808080", "from": 45, "to": 6}, {"edge_color": "#808080", "from": 46, "to": 18}, {"edge_color": "#808080", "from": 47, "to": 8}, {"edge_color": "#808080", "from": 48, "to": 3}, {"edge_color": "#808080", "from": 48, "to": 21}, {"edge_color": "#808080", "from": 49, "to": 9}, {"edge_color": "#808080", "from": 49, "to": 5}, {"edge_color": "#808080", "from": 50, "to": 8}, {"edge_color": "#808080", "from": 50, "to": 9}, {"edge_color": "#808080", "from": 51, "to": 6}, {"edge_color": "#808080", "from": 51, "to": 11}, {"edge_color": "#808080", "from": 52, "to": 3}, {"edge_color": "#808080", "from": 53, "to": 8}, {"edge_color": "#808080", "from": 53, "to": 9}, {"edge_color": "#808080", "from": 54, "to": 21}, {"edge_color": "#808080", "from": 55, "to": 6}, {"edge_color": "#808080", "from": 55, "to": 11}, {"edge_color": "#808080", "from": 56, "to": 15}, {"edge_color": "#808080", "from": 57, "to": 6}, {"edge_color": "#808080", "from": 58, "to": 15}, {"edge_color": "#808080", "from": 59, "to": 9}, {"edge_color": "#808080", "from": 59, "to": 5}, {"edge_color": "#808080", "from": 60, "to": 3}, {"edge_color": "#808080", "from": 60, "to": 21}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
