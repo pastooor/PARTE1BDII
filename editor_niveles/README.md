@@ -116,7 +116,7 @@ Con esta query vamos a sacar el camino más corto entre todas las areas del jueg
 ##### Query
         MATCH p=() - [:SHORTEST_PATH] - () RETURN p
 
-En el achivo 'mapamundi.html' se puede ver el grafo resultante que hemos sacado para representar el mapamundi.
+En el achivo 'mapamundi.html' se puede ver el grafo resultante que hemos sacado para representar el mapamundi. El grosor de las aristas es proporcional a la longitud del shortest path. No es un grafo dirigido porque el camino más corto para ir de un área a otra es el mismo que en sentido contrario. 
 
 #### 2.    **Listado mazmorras:** El listado de mazmorras debe mostrar todas las mazmorras del juego y las áreas con las que están conectadas. Debería ser capaz de ver a simple vista que mazmorras están en cada área y mazmorras hacen de puente entre dos áreas. 
 
@@ -128,21 +128,7 @@ En el achivo 'mapamundi.html' se puede ver el grafo resultante que hemos sacado 
         MATCH (room)-[:IS_CONNECTED]-(a:Area) 
         RETURN dungeon_name, collect(DISTINCT a.name) AS connected_areas"
 
-En el achivo 'listado_mazmorras.html' se pueden ver todas las mazmorras del juego que pertenezcan al menos a una de las 10 areas del juego. 
-Las areas del juego se representan de color amarillo y las mazmorras de color azul.
-
-
-#### 2.    **Listado mazmorras:** El listado de mazmorras debe mostrar todas las mazmorras del juego y las áreas con las que están conectadas. Debería ser capaz de ver a simple vista que mazmorras están en cada área y mazmorras hacen de puente entre dos áreas. 
-
-##### Query
-        MATCH (d:Room) 
-        WHERE d.dungeon_name IS NOT NULL 
-        WITH DISTINCT d.dungeon_name AS dungeon_name, collect(d) AS rooms 
-        UNWIND rooms AS room 
-        MATCH (room)-[:IS_CONNECTED]-(a:Area) 
-        RETURN dungeon_name, collect(DISTINCT a.name) AS connected_areas"
-
-En el achivo 'listado_mazmorras.html' se pueden ver todas las mazmorras del juego que pertenezcan al menos a una de las 10 areas del juego. 
+En el achivo 'listado_mazmorras.html' se pueden ver todas las mazmorras del juego que pertenezcan al menos a una de las 10 areas del juego. También se puede contemplar las mazmorras que conectan un área con otra.
 Las areas del juego se representan de color amarillo y las mazmorras de color azul.
 
 
@@ -171,7 +157,7 @@ Como ya se ha explicado para saber como avanzar y poder superar una mazmorra hay
         MATCH p=(r:Room {dungeon_name: $dungeon_name}) - [:IS_CONNECTED] - (r2:Room {dungeon_name: $dungeon_name})
         RETURN p
 
-En el achivo 'mazmorras.html' se puede ver cada una de las habitaciones, tesoros y monstruos que hay en la mazmorra que se desee.
+En el achivo 'mazmorras.html' se puede ver de cada una de las habitaciones, los tesoros y monstruos con su nivel y precio respectivos que hay en la mazmorra que se desee.
 Dentro del grafo que se saca, se pueden ver la habitación de entrada y salida de color verde oscuro y verde claro respectivamente, el resto de las habitaciones de color rosa, sus conexiones con otras habitaciones y el contenido en el caso de que esa habitación tenga tanto de tesoros como de monstruos, de color amarillo y azul respectivamente. 
 
 Gracias a este grafo un jugador podría elegir por que habitaciones le interesa pasar en función de lo que busque ya sean kills, recompensas o records de tiempos.
