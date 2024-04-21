@@ -161,6 +161,9 @@ Dentro del grafo que se saca, se pueden ver la habitación de entrada y salida d
 Gracias a este grafo un jugador podría elegir por que habitaciones le interesa pasar en función de lo que busque ya sean kills, recompensas o records de tiempos.
 
 ### Filtro Colaborativo
+
+El código de esta parte se puede encontrar en el archivo 'filtro.ipynb'.
+
 #### 1. . Una que realice una consulta Cypher y sin usar plugins busque otros monstruos que coaparezcan en otras salas con los monstruos de nuestro encuentro. 
 
     from neo4j import GraphDatabase
