@@ -13,8 +13,10 @@ Se nos pide realizar una seria de consultas sobre nuestra base de datos en neo4j
       RETURN m.name
   
 #### 3.	Obtener todos los monstruos que no están presentes en ninguna sala.
-      MATCH p=(r:Room {room_name: $room_name}) – [:CONTAINS] – (m:Monster)
-      WHERE m NOT IN (p)
+      MATCH (m:Monster)
+      WHERE NOT EXISTS {
+          MATCH (:Room)-[:CONTAINS]->(m)
+      }
       RETURN m.name
 
 #### 4.	Calcular el camino más corto de un área a otra área.
@@ -63,14 +65,14 @@ Se nos pide realizar una seria de consultas sobre nuestra base de datos en neo4j
 
 #### 11.	Calcular el número medio de pasillos (tanto entrantes como salientes) que tienen las salas de una mazmorra.
 ##### Primera Query
-En la que calculamos el número total de pasillos por mazmorra.
+En la que calculamos el número total de pasillos por mazmorra y almacenamos el resultado en un diccionario llamado num_connections_per_dungeon que tiene como clave el nombre de la mazmorra y como valor el número de pasillos.
 
       MATCH (r:Room)-[:IS_CONNECTED]->(:Room)
       WITH r.dungeon_name AS dungeon, COUNT(*) AS num_connections
       RETURN dungeon, num_connections
       
 ##### Segunda Query
-Calculamos el número total de mazmorras.
+Calculamos el número total de mazmorras y guardamos el resultado en una variable llamada total_dungeons.
 
         MATCH (r:Room)
         WITH DISTINCT r.dungeon_name AS dungeon
@@ -79,16 +81,14 @@ Calculamos el número total de mazmorras.
 ##### Tercera Query
 Por último calculamos el número medio de pasillos por mazmorra.
 
-        MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
-        WITH r, max(m.level) AS maxLevel
-        WHERE m.level = maxLevel
-        RETURN r
+        avg_connections = sum(num_connections_per_dungeon.values()) / total_dungeons
 
 #### 12.	Buscar la/las salas que contienen el/los monstruos de más nivel de la mazmorra.
-        MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
-        WITH r, max(m.level) AS maxLevel
-        WHERE m.level = maxLevel
-        RETURN r
+        MATCH (r:Room {dungeon_name: $dungeon_name})-[:CONTAINS]->(m:Monster)
+        WITH r, m
+        ORDER BY m.level DESC
+        LIMIT 1
+        RETURN r.room_name AS room_name
 
 #### 13.	Calcular la experiencia total de cada uno de los encuentros (grupo de monstruos presentes en una sala) de una mazmorra y mostrarlos ordenados de mayor a menor experiencia.
         MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
@@ -98,10 +98,10 @@ Por último calculamos el número medio de pasillos por mazmorra.
 
 #### 14.    Buscar la sala dónde este el encuentro (grupo de monstruos presentes en una sala) que más experiencia da de una mazmorra.
         MATCH (r:Room {dungeon_name: $dungeon_name}) – [:CONTAINS] -> (m:Monster)
-        WITH room, collect(monster) AS monsters, sum(monster.experience) AS totalExperience
+        WITH r, collect(m) AS monsters, sum(m.exp) AS totalExperience
         ORDER BY totalExperience DESC
         LIMIT 1
-        RETURN room, monsters, totalExperience;
+        RETURN r, monsters, totalExperience;
 
 https://github.com/pastooor/PARTE1BDII/blob/main/editor_niveles/mapamundi.html
 
@@ -146,7 +146,6 @@ En el achivo 'listado_mazmorras.html' se pueden ver todas las mazmorras del jueg
 Las areas del juego se representan de color amarillo y las mazmorras de color azul.
 
 
-
 #### 3.    Mini-mapa mazmorra: Dada una mazmorra el mini mapa debe mostrar información que ayude a los aventureros a explorar la mazmorra. En el mini mapa debe ser fácil reconocer las entradas y las salidas de una mazmorra. Los pasillos que llevan a salas interesantes. Las zonas donde hay monstruos o tesoros y el nivel/precio de estos. 
 
 Gracias a estas querie vamos a poder sacar toda la información de un mazmorra.
@@ -173,7 +172,87 @@ Como ya se ha explicado para saber como avanzar y poder superar una mazmorra hay
         RETURN p
 
 En el achivo 'mazmorras.html' se puede ver cada una de las habitaciones, tesoros y monstruos que hay en la mazmorra que se desee.
-Dentro del grafo que se saca, se pueden ver las habitaciones de color rosa, sus conexiones con otras habitaciones y el contenido en el caso de que esa habitación tenga tanto de tesoros como de monstruos, de color amarillo y azul respectivamente. 
+Dentro del grafo que se saca, se pueden ver la habitación de entrada y salida de color verde oscuro y verde claro respectivamente, el resto de las habitaciones de color rosa, sus conexiones con otras habitaciones y el contenido en el caso de que esa habitación tenga tanto de tesoros como de monstruos, de color amarillo y azul respectivamente. 
 
 Gracias a este grafo un jugador podría elegir por que habitaciones le interesa pasar en función de lo que busque ya sean kills, recompensas o records de tiempos.
 
+### Filtro Colaborativo
+#### 1. . Una que realice una consulta Cypher y sin usar plugins busque otros monstruos que coaparezcan en otras salas con los monstruos de nuestro encuentro. 
+
+    from neo4j import GraphDatabase
+
+    # Preparamos la sesión para acceder a neo4j
+    driver = GraphDatabase.driver('neo4j://localhost:7687', auth=("neo4j", "BDII2023"))
+    session = driver.session()
+
+    def search_monsters(room_name):
+        query = """
+        MATCH (r:Room {room_name: $room_name}) - [:CONTAINS] - (m:Monster) 
+        MATCH (r2:Room) - [:CONTAINS] - (m)
+        MATCH (r2) - [:CONTAINS] - (m2:Monster)
+        RETURN DISTINCT m, m2
+        """  
+    
+        results = session.run(query, room_name=room_name).data()
+        monsters_dict = {}
+        
+        for record in results:
+            m = (record['m']['name'], record['m']['monsters_id'])  # Clave como tupla de nombre e id
+            m2 = {'name': record['m2']['name'], 'monsters_id': record['m2']['monsters_id']}  # Valor como diccionario con nombre e id
+            
+            if m not in monsters_dict:
+                monsters_dict[m] = []
+            
+            # Agregamos m2 a la lista correspondiente a m
+            monsters_dict[m].append(m2)
+        # Si no hay ningún monstruo
+        if monsters_dict == {}:
+            print('Esta sala no tiene monstruos')
+        else:
+            return monsters_dict
+
+Esta función toma como parámetro el nombre de una habitación y devuelve un diccionario que tiene como claves una tupla con el nombre e id del monstruos de la habitación deseada y como valor una lista de tuplas también con el nombre e id de los otros monstruos que coaparecen en otras salas con el monstruo que aparece como clave. En caso de que no haya monstruos en esa sala se imprime un mensaje. 
+
+
+#### 2. Una que utilice el plugin de GDS para realizar una recomendación de 5 monstruos ordenados del que mas recomendaría al que menos recomendaría.
+
+        from graphdatascience import GraphDataScience
+        import pandas as pd
+        
+        # configure connection
+        gds = GraphDataScience("neo4j://localhost:7687", auth=("neo4j", "BDII2023"))
+        print(f"GDS version: {gds.version()}")
+
+        def monster_recommendations(room_name):
+            node_query = """
+            MATCH (r1:Room)-[:CONTAINS]->(m1:Monster)<-[:CONTAINS]-(r2:Room)-[:CONTAINS]->(m2:Monster)
+            RETURN DISTINCT id(m1) as id
+            """
+            edge_query = """
+            MATCH (r1:Room)-[:CONTAINS]->(m1:Monster)<-[:CONTAINS]-(r2:Room)-[:CONTAINS]->(m2:Monster)
+            RETURN DISTINCT id(m1) as source, id(m2) as target, 1 as weight
+            """
+        
+            with gds.graph.project.cypher("monster_coappearances", node_query, edge_query) as g_temp:
+                q_source = """
+                    MATCH (:Room {room_name: $room_name})-[:CONTAINS]->(m:Monster) 
+                    RETURN id(m) as sources
+                """
+                sources = gds.run_cypher(q_source, params={"room_name": room_name}).iloc[:, 0]
+                # print(sources)
+                result = gds.pageRank.stream(g_temp, sourceNodes=sources, relationshipWeightProperty="weight")
+                result = result.query("score > 0")
+        
+                nodes = result.nodeId.to_list()
+                q = """
+                MATCH (:Room {room_name: $room_name})-[:CONTAINS]->(m:Monster) WITH collect(m) as sources
+                MATCH (m:Monster) WHERE id(m) IN $nodes AND NOT(m in sources) 
+                RETURN id(m) AS nodeId, m.name AS monster
+                """
+                df = gds.run_cypher(q, params={"room_name": room_name, "nodes": nodes})
+        
+                recommendation = pd.merge(result, df, how="left", left_on="nodeId", right_on="nodeId").dropna().sort_values("score",     ascending=False).head(5)
+
+            return recommendation
+
+Esta función, al igual que la anterior, toma como parámetro el nombre de una habitación. Busca los monstruos que aparecen en nuestra habitación y busca los otros monstruos que aparecen en otras salas junto a los monstruos de nuestro encuentro. Una vez obtenidos, se aplica el procedimiento de pageRank de gds y nos devuelve un score para cada monstruo en forma de dataframe. Por último, como solo queremos que aparezcan el resto de monstruos (no los que aparecen en nuestro encuentro) los filtramos y devolvemos solo los 5 primeros con el score más alto. 
